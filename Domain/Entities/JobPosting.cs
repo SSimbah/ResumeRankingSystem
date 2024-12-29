@@ -20,7 +20,10 @@ namespace Domain.Entities
         public required string EducationRequirement { get; set; }
         public required string ExperienceRequirement { get; set; }
         public DateTime CreatedAt { get; set; }
-        public required User User { get; set; }
-        public ICollection<Application> Applications { get; set; }
+        public decimal SkillsScoring { get; set; }
+        public decimal EducationScoring { get; set; }
+        public decimal ExperienceScoring { get; set; }
+        public User? User { get; set; }
+        public ICollection<Application>? Applications { get; set; }
     }
 }

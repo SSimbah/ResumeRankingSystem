@@ -1,0 +1,34 @@
+﻿@model Domain.Entities.User
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Login</h1>
+<p>
+    <a asp-action="Create">Employee Signup</a>
+</p>
+
+<form asp-action="Login" method="post">
+    <div class="form-group">
+        <label asp-for="Username">Username</label>
+        <input type="text" name="username" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="Password">Password</label>
+        <input type="password" name="password" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="text-danger">
+        @Html.ValidationSummary()
+    </div>
+}

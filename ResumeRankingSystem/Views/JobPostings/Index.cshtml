@@ -95,6 +95,13 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Helper function to truncate text
+    string Truncate(string value, int maxLength)
+    {
+        if (string.IsNullOrEmpty(value)) return value;
+        return value.Length <= maxLength ? value : value.Substring(0, maxLength) + "...";
+    }
 }
 
 <h1>Job Postings</h1>
@@ -117,20 +124,21 @@
                         <small class="text-muted">By: @item.User.Email</small>
                     </p>
                     <p class="card-text">
-                        <strong>Description:</strong> @item.Description
+                        <strong>Description:</strong> @Truncate(item.Description, 100)
                     </p>
                     <p class="card-text">
-                        <strong>Skills Requirement:</strong> @item.SkillsRequirement
+                        <strong>Skills Requirement:</strong> @Truncate(item.SkillsRequirement, 50)
                     </p>
                     <p class="card-text">
-                        <strong>Education Requirement:</strong> @item.EducationRequirement
+                        <strong>Education Requirement:</strong> @Truncate(item.EducationRequirement, 50)
                     </p>
                     <p class="card-text">
-                        <strong>Experience Requirement:</strong> @item.ExperienceRequirement
+                        <strong>Experience Requirement:</strong> @Truncate(item.ExperienceRequirement, 50)
                     </p>
                 </div>
             </div>
         </div>
     }
 </div>
+
 

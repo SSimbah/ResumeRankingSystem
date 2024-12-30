@@ -34,7 +34,6 @@ namespace Domain.DataAccess
         public DbSet<JobPosting> JobPostings { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<Experience> Experiences { get; set; }
-        public DbSet<ScoringMetric> ScoringMetrics { get; set; }
         public DbSet<ProofDocument> ProofDocuments { get; set; }
 
     }

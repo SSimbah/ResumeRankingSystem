@@ -1,8 +1,46 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<Domain.Entities.JobPosting>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Helper function to truncate text
+    string Truncate(string value, int maxLength)
+    {
+        if (string.IsNullOrEmpty(value)) return value;
+        return value.Length <= maxLength ? value : value.Substring(0, maxLength) + "...";
+    }
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1>Job Postings</h1>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100" style="cursor: pointer;" onclick="location.href='@Url.Action("Details", new { id = item.JobId })'">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text">
+                        <small class="text-muted">Posted on: @item.CreatedAt.ToString("MMM dd, yyyy")</small>
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">By: @item.User.Email</small>
+                    </p>
+                    <p class="card-text">
+                        <strong>Description:</strong> @Truncate(item.Description, 100)
+                    </p>
+                    <p class="card-text">
+                        <strong>Skills Requirement:</strong> @Truncate(item.SkillsRequirement, 50)
+                    </p>
+                    <p class="card-text">
+                        <strong>Education Requirement:</strong> @Truncate(item.EducationRequirement, 50)
+                    </p>
+                    <p class="card-text">
+                        <strong>Experience Requirement:</strong> @Truncate(item.ExperienceRequirement, 50)
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
 </div>

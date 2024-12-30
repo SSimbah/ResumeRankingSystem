@@ -10,7 +10,7 @@ using Domain.Entities;
 
 namespace ResumeRankingSystem.Controllers
 {
-    public class UsersController : Controller
+    public class UsersController : AuthenticatedController
     {
         private readonly DatabaseDbContext _context;
 
@@ -20,10 +20,16 @@ namespace ResumeRankingSystem.Controllers
         }
 
         // GET: Users
-        public Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
-            return Task.FromResult<IActionResult>(RedirectToAction("Index", "Home"));
+            //return Task.FromResult<IActionResult>(RedirectToAction("Index", "JobPostings"));
             //return View(await _context.Users.ToListAsync());
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
+
+            return View(await _context.Users.ToListAsync());
         }
         // GET: Users/Login
         public IActionResult Login()
@@ -52,13 +58,30 @@ namespace ResumeRankingSystem.Controllers
             }
 
             // Redirect to the index page or dashboard after successful login
-            return RedirectToAction(nameof(Index));
+            // return RedirectToAction(nameof(Index));
+            // Store user information in session
+            HttpContext.Session.SetInt32("UserId", user.UserId);
+            HttpContext.Session.SetString("Username", user.Username);
+
+            return RedirectToAction(nameof(Index), "JobPostings");
         }
+
+        // GET: Users/Logout
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Users");
+        }
+
 
 
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -77,6 +100,10 @@ namespace ResumeRankingSystem.Controllers
         // GET: Users/Create
         public IActionResult Create()
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
             return View();
         }
 
@@ -99,6 +126,11 @@ namespace ResumeRankingSystem.Controllers
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
+
             if (id == null)
             {
                 return NotFound();
@@ -117,7 +149,7 @@ namespace ResumeRankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Username,Password,Email")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId ,Username,Password,Email")] User user)
         {
             if (id != user.UserId)
             {
@@ -150,6 +182,10 @@ namespace ResumeRankingSystem.Controllers
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
             if (id == null)
             {
                 return NotFound();

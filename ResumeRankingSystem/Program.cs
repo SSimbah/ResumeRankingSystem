@@ -10,7 +10,13 @@ builder.Services.AddDbContext<DatabaseDbContext>(options =>
 
 
 // Add session services
-builder.Services.AddSession();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust as needed
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 
 // Add services to the container.

@@ -6,9 +6,6 @@
 }
 
 <h1>Login</h1>
-<p>
-    <a asp-action="Create">Employee Signup</a>
-</p>
 
 <form asp-action="Login" method="post">
     <div class="form-group">
@@ -22,9 +19,6 @@
     <button type="submit" class="btn btn-primary">Login</button>
 </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @if (!ViewData.ModelState.IsValid)
 {

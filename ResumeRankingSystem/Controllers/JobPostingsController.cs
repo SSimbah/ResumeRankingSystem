@@ -10,7 +10,7 @@ using Domain.Entities;
 
 namespace ResumeRankingSystem.Controllers
 {
-    public class JobPostingsController : Controller
+    public class JobPostingsController : AuthenticatedController
     {
         private readonly DatabaseDbContext _context;
 
@@ -22,6 +22,10 @@ namespace ResumeRankingSystem.Controllers
         // GET: JobPostings
         public async Task<IActionResult> Index()
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
             var databaseDbContext = _context.JobPostings.Include(j => j.User);
             return View(await databaseDbContext.ToListAsync());
         }
@@ -29,6 +33,10 @@ namespace ResumeRankingSystem.Controllers
         // GET: JobPostings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -48,6 +56,10 @@ namespace ResumeRankingSystem.Controllers
         // GET: JobPostings/Create
         public IActionResult Create()
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Email");
             return View();
         }
@@ -72,6 +84,10 @@ namespace ResumeRankingSystem.Controllers
         // GET: JobPostings/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
             if (id == null)
             {
                 return NotFound();
@@ -125,6 +141,10 @@ namespace ResumeRankingSystem.Controllers
         // GET: JobPostings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!IsUserLoggedIn())
+            {
+                return RedirectToLogin();
+            }
             if (id == null)
             {
                 return NotFound();

@@ -13,19 +13,48 @@ namespace Domain.Entities
         [Key]
         [ScaffoldColumn(false)]
         public int ApplicantId { get; set; }
-        public required string Username { get; set; }
-        public required string Password { get; set; }
-        public required string Email { get; set; }
-        public required string FirstName { get; set; }
-        public required string MiddleName { get; set; }
-        public required string LastName { get; set; }
+
+        [Required(ErrorMessage = "Username is required.")]
+        public string? Username { get; set; }
+
+        [Required(ErrorMessage = "Password is required.")]
+        public string? Password { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? FirstName { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? MiddleName { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? LastName { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? Objective { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? Email { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? PhoneNumber { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? Address { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? Gender { get; set; }
+
+        [ScaffoldColumn(false)]
         public int Age { get; set; }
-        public required string Gender { get; set; }
-        public required string Address { get; set; }
-        public int PhoneNumber { get; set; }
-        public required string Skills { get; set; }
-        public ICollection<Education> Educations { get; set; }
-        public ICollection<Experience> Experiences { get; set; }
-        public ICollection<Application> Applications { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? Experience { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? Education { get; set; }
+
+        [ScaffoldColumn(false)]
+        public string? Skills { get; set; }
+        public ICollection<Application>? Applications { get; set; }
     }
 }

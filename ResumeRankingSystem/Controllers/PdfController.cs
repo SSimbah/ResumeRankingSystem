@@ -18,6 +18,23 @@ namespace YourApp.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult DownloadTemplate()
+        {
+            // Path to your template file
+            string filePath = Path.Combine("wwwroot", "images", "resume_template.pdf");
+            string fileName = "ResumeTemplate.pdf";
+
+            // Return the file as a download
+            if (System.IO.File.Exists(filePath))
+            {
+                var fileBytes = System.IO.File.ReadAllBytes(filePath);
+                return File(fileBytes, "application/pdf", fileName);
+            }
+
+            return NotFound("Template not found.");
+        }
+
         // POST: Pdf/ExtractText
         [HttpPost]
         public IActionResult ExtractText(IFormFile file)
@@ -31,11 +48,13 @@ namespace YourApp.Controllers
             string extractedText = ExtractTextFromPdf(file);
             var parsedFields = ParseExtractedText(extractedText);
 
-            // Pass the parsed data to the view
+            // Pass the parsed fields to the view for confirmation
             ViewBag.ParsedFields = parsedFields;
 
+            // Return the view where the user can confirm the data
             return View("FormResults");
         }
+
 
         private string ExtractTextFromPdf(IFormFile file)
         {
@@ -95,12 +114,15 @@ namespace YourApp.Controllers
             // Define the field names you expect
             var fieldNames = new List<string>
             {
-                "name_input",
+                "fname_input",
+                "mname_input",
+                "lname_input",
                 "objective_input",
                 "email_input",
                 "phone_input",
                 "address_input",
-                "Gender",
+                "gender_input",
+                "age_input",
                 "experience_input",
                 "education_input",
                 "skills_input"

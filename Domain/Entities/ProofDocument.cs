@@ -15,7 +15,6 @@ namespace Domain.Entities
         public int ApplicantId { get; set; }
         public required string DocumentType { get; set; }
         public required string FilePath { get; set; }
-        public DateTime UploadedAt { get; set; }
         public Applicant Applicant { get; set; }
     }
 }

@@ -2,16 +2,27 @@
     var parsedFields = ViewBag.ParsedFields as Dictionary<string, string>;
 }
 
-<table>
-    <tr>
-        <th>Field Name</th>
-        <th>Value</th>
-    </tr>
-    @foreach (var field in parsedFields)
-    {
+<h2>Form Results</h2>
+
+<table class="table">
+    <thead>
         <tr>
-            <td class="align-top">@field.Key</td>
-            <td>@Html.Raw(field.Value.Replace("\n", "<br />"))</td>
+            <th>Field Name</th>
+            <th>Value</th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var field in parsedFields)
+        {
+            <tr>
+                <td class="align-top">@field.Key</td>
+                <td>@Html.Raw(field.Value.Replace("\n", "<br />"))</td>
+            </tr>
+        }
+    </tbody>
 </table>
+
+<!-- Button to pass data to the Create action via GET request -->
+<a href="@Url.Action("Create", "Applicants", new { parsedFields = Json.Serialize(parsedFields) })" class="btn btn-primary">
+    Confirm and Submit
+</a>

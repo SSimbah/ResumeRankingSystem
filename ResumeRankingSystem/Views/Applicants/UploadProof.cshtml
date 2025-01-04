@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Upload Proof";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Upload Proof</h1>
+
+<h4>Select PDF Files</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <!-- Form for file upload -->
+        <form asp-action="UploadProof" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="fileInput">Choose PDF files:</label>
+                <input type="file" id="fileInput" name="files" class="form-control" accept=".pdf" multiple required />
+                <small class="form-text text-muted">You can select multiple PDF files.</small>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Upload" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+
+<h4>Selected Files</h4>
+<ul id="fileList" class="list-group">
+    <!-- The list of selected files will be dynamically added here -->
+</ul>
+
+@section Scripts {
+    <script>
+        // JavaScript to handle file input and display selected file names
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = ''; // Clear any previous file list
+
+            const files = event.target.files;
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    const fileItem = document.createElement('li');
+                    fileItem.className = 'list-group-item';
+                    fileItem.textContent = files[i].name;
+                    fileList.appendChild(fileItem);
+                }
+            } else {
+                const noFilesItem = document.createElement('li');
+                noFilesItem.className = 'list-group-item text-muted';
+                noFilesItem.textContent = 'No files selected.';
+                fileList.appendChild(noFilesItem);
+            }
+        });
+    </script>
+}

@@ -1,0 +1,17 @@
+﻿@{
+    var parsedFields = ViewBag.ParsedFields as Dictionary<string, string>;
+}
+
+<table>
+    <tr>
+        <th>Field Name</th>
+        <th>Value</th>
+    </tr>
+    @foreach (var field in parsedFields)
+    {
+        <tr>
+            <td class="align-top">@field.Key</td>
+            <td>@Html.Raw(field.Value.Replace("\n", "<br />"))</td>
+        </tr>
+    }
+</table>

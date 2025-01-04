@@ -9,12 +9,14 @@
 
   <ItemGroup>
     <!-- Removed the conflicting 'EntityFramework' package -->
+    <PackageReference Include="itext7" Version="7.2.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="PdfSharpCore" Version="1.3.65" />
     <!-- Added 'Microsoft.EntityFrameworkCore.Design' for design-time support -->
   </ItemGroup>
 

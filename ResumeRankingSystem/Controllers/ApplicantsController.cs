@@ -26,7 +26,7 @@ namespace ResumeRankingSystem.Controllers
             return View();
         }
 
-        // POST: Users/Login
+        // POST: Applicant/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password)
@@ -247,7 +247,7 @@ namespace ResumeRankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Username,Password")] Applicant applicant)
+        public async Task<IActionResult> Edit(int id, [Bind("Username,Password,FirstName,MiddleName,LastName,Objective,Email,PhoneNumber,Address,Gender,Age,Experience,Education,Skills")] Applicant applicant)
         {
             if (id != applicant.ApplicantId)
             {
@@ -352,6 +352,56 @@ namespace ResumeRankingSystem.Controllers
         private bool ApplicantExists(int id)
         {
             return _context.Applicants.Any(e => e.ApplicantId == id);
+        }
+
+        // GET: Applicants/Documents/5
+        public async Task<IActionResult> Documents(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Fetch the proof documents for the given ApplicantId
+            var proofDocuments = await _context.ProofDocuments
+                .Where(d => d.ApplicantId == id)
+                .ToListAsync();
+
+            if (proofDocuments == null || !proofDocuments.Any())
+            {
+                // Optionally, you can return a view indicating no documents are available
+                ViewBag.Message = "No proof documents found for this applicant.";
+            }
+
+            // Pass the list of proof documents to the view
+            return View(proofDocuments);
+        }
+
+        // POST: Applicants/DeleteDocument/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteDocument(int id)
+        {
+            // Find the document to delete
+            var document = await _context.ProofDocuments.FindAsync(id);
+            if (document == null)
+            {
+                return NotFound();
+            }
+
+            // Delete the file from the server
+            var filePath = Path.Combine("wwwroot", document.FilePath.TrimStart('/'));
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            // Remove the document from the database
+            _context.ProofDocuments.Remove(document);
+            await _context.SaveChangesAsync();
+
+            // Redirect back to the Documents view for the applicant
+            return RedirectToAction(nameof(Documents), new { id = document.ApplicantId });
         }
     }
 }

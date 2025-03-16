@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Domain.Entities.EducationRequirement>
+
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>View</h1>
+
+<p>
+    <a asp-action="Create" asp-route-jobId="@ViewData["JobId"]">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Scoring)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Scoring)
+                </td>
+                <td>
+                    <!-- Dropdown Button -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="modifyDropdown-@item.EducationRequirementId" data-bs-toggle="dropdown" aria-expanded="false">
+                            Modify
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="modifyDropdown-@item.EducationRequirementId">
+                            <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.EducationRequirementId">Edit</a></li>
+                            <li><a class="dropdown-item" asp-action="Delete" asp-route-id="@item.EducationRequirementId">Delete</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

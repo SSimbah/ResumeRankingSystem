@@ -34,9 +34,17 @@ namespace StudentAttendanceSystem.Controllers
                 return NotFound();
             }
 
+            //var jobPosting = await _context.JobPostings
+            //    .Include(j => j.User)
+            //    .FirstOrDefaultAsync(m => m.JobId == id);
+
             var jobPosting = await _context.JobPostings
                 .Include(j => j.User)
+                .Include(j => j.EducationRequirements)    // Add this line
+                .Include(j => j.ExperienceRequirements)   // Add this line
+                .Include(j => j.SkillRequirements)        // Add this line
                 .FirstOrDefaultAsync(m => m.JobId == id);
+
             if (jobPosting == null)
             {
                 return NotFound();

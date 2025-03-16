@@ -1,4 +1,5 @@
-﻿@model Domain.Entities.JobPosting
+﻿
+@model Domain.Entities.JobPosting
 
 @{
     ViewData["Title"] = "Details";
@@ -9,6 +10,12 @@
 
 <div>
     <h4>JobPosting</h4>
+    <a asp-action="Index">Back to List</a> <text>|</text>
+    @if (ViewBag.LoggedInUserId != null && ViewBag.LoggedInUserId == Model.UserId)
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.JobId">Edit</a> <text>|</text>
+        <a asp-action="Delete" asp-route-id="@Model?.JobId">Delete</a>
+    }
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -24,46 +31,10 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SkillsRequirement)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SkillsRequirement)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EducationRequirement)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EducationRequirement)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExperienceRequirement)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ExperienceRequirement)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedAt)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SkillsScoring)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SkillsScoring)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EducationScoring)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EducationScoring)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExperienceScoring)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ExperienceScoring)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User)
@@ -74,7 +45,29 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.JobId">Edit</a> |
-    <a asp-action="Delete" asp-route-id="@Model?.JobId">Delete</a> |
-    <a asp-action="Index">Back to List</a>
+    @* <a asp-action="GetByJobId" asp-controller="SkillRequirements" asp-route-jobId="@Model.JobId">View Skill Requirements</a> <text>|</text> *@
+    @* <a asp-action="GetByJobId" asp-controller="EducationRequirements" asp-route-jobId="@Model.JobId">View Education Requirements</a> <text>|</text> *@
+    @* <a asp-action="GetByJobId" asp-controller="ExperienceRequirements" asp-route-jobId="@Model.JobId">View Experience Requirements</a> *@
+    <!-- Bootstrap Flexbox container -->
+    <div class="d-flex flex-wrap gap-3 mt-4">
+        <a asp-action="GetByJobId"
+           asp-controller="SkillRequirements"
+           asp-route-jobId="@Model.JobId"
+           class="btn btn-dark">Skill Requirements</a>
+
+        <a asp-action="GetByJobId"
+           asp-controller="EducationRequirements"
+           asp-route-jobId="@Model.JobId"
+           class="btn btn-dark">Education Requirements</a>
+
+        <a asp-action="GetByJobId"
+           asp-controller="ExperienceRequirements"
+           asp-route-jobId="@Model.JobId"
+           class="btn btn-dark">Experience Requirements</a>
+
+        <a asp-action="ApplicantRank"
+           asp-controller="Applications"
+           asp-route-jobId="@Model.JobId"
+           class="btn btn-dark">View Applicant Ranking</a>
+    </div>
 </div>

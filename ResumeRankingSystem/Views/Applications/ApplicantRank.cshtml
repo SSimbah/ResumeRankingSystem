@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Domain.Entities.Application>
+
+@{
+    ViewData["Title"] = "Applicant Rank";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Applicant Rankings</h1>
+<!-- Rescore Button -->
+<form asp-action="RescoreApplicants" method="post" style="margin-bottom: 20px;">
+    <input type="hidden" name="jobId" value="@ViewBag.JobId" />
+    <button type="submit" class="btn btn-primary">Rescore All Applicants</button>
+</form>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No applications found for this job.</p>
+}
+else
+{
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Applicant Name</th>
+                    <th>Status</th>
+                    <th>Score</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rank = 1; // Initialize rank counter
+                }
+                @foreach (var application in Model)
+                {
+                    <tr>
+                        <td>@rank</td>
+                        <td>@Html.DisplayFor(modelItem => application.Applicant.FullName)</td>
+                        <td>@Html.DisplayFor(modelItem => application.Status)</td>
+                        <td>@($"{application.Score * 100:F0}%")</td>
+                        <td>
+                            <!-- Dropdown Button -->
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="modifyDropdown-@application.ApplicationId" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Modify
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="modifyDropdown-@application.ApplicationId">
+                                    <li><a class="dropdown-item" asp-action="Details" asp-route-id="@application.ApplicationId">Details</a></li>
+                                    <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@application.ApplicationId">Edit</a></li>
+                                    <li><a class="dropdown-item" asp-action="Delete" asp-route-id="@application.ApplicationId">Delete</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    rank++; // Increment the rank counter
+                }
+            </tbody>
+        </table>
+}

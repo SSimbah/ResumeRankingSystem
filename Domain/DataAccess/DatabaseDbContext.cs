@@ -35,6 +35,11 @@ namespace Domain.DataAccess
         public DbSet<Application> Applications { get; set; }
         public DbSet<Experience> Experiences { get; set; }
         public DbSet<ProofDocument> ProofDocuments { get; set; }
+        // New DbSet properties for the requirement entities
+        public DbSet<EducationRequirement> EducationRequirements { get; set; }
+        public DbSet<ExperienceRequirement> ExperienceRequirements { get; set; }
+        public DbSet<SkillRequirement> SkillRequirements { get; set; }
+
 
     }
 }

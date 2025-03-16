@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Check if ApplicantId exists in the session
+    var applicantIdInSession = Context.Session.GetInt32("ApplicantId");
 }
 
 <h1>Details</h1>
@@ -122,6 +125,12 @@
 </div>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.ApplicantId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <!-- Conditionally display the Edit link -->
+    @if (applicantIdInSession.HasValue && applicantIdInSession == Model?.ApplicantId)
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.ApplicantId">Edit</a>
+    }
+
+    <a asp-action="Documents" asp-route-id="@Model?.ApplicantId">View Documents</a>
+    @* <a asp-action="Index">Back to List</a> *@
 </div>

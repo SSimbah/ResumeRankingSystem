@@ -29,6 +29,9 @@ namespace Domain.Entities
         [ScaffoldColumn(false)]
         public string? LastName { get; set; }
 
+        // Computed property for full name
+        public string FullName => $"{FirstName} {LastName}";
+
         [ScaffoldColumn(false)]
         public string? Objective { get; set; }
 

@@ -1,0 +1,95 @@
+﻿@* @model IEnumerable<Domain.Entities.ProofDocument> *@
+
+@* @{ *@
+@*     ViewData["Title"] = "Applicant Documents"; *@
+@* } *@
+
+@* <h1>Applicant Documents</h1> *@
+@* <a asp-action="UploadProof">Upload Proof Documents</a> *@
+
+@* @if (ViewBag.Message != null) *@
+@* { *@
+@*         <p>@ViewBag.Message</p> *@
+@* } *@
+@* else *@
+@* { *@
+@*         <table class="table"> *@
+@*             <thead> *@
+@*                 <tr> *@
+@*                     <th>Document ID</th> *@
+@*                     <th>Document Type</th> *@
+@*                     <th>File Path</th> *@
+@*                     <th>Actions</th> *@
+@*                 </tr> *@
+@*             </thead> *@
+@*             <tbody> *@
+@*             @foreach (var document in Model) *@
+@*             { *@
+@*                         <tr> *@
+@*                             <td>@document.DocumentId</td> *@
+@*                             <td>@document.DocumentType</td> *@
+@*                             <td><a href="@document.FilePath" target="_blank">View File</a></td> *@
+@*                             <td> *@
+@*                                 <!-- Add actions like download or delete if needed --> *@
+@*                                 <a href="@document.FilePath" download>Download</a> *@
+@*                             </td> *@
+@*                         </tr> *@
+@*             } *@
+@*             </tbody> *@
+@*         </table> *@
+@* } *@
+@model IEnumerable<Domain.Entities.ProofDocument>
+
+@{
+    ViewData["Title"] = "Applicant Documents";
+
+    // Check if ApplicantId exists in the session
+    var applicantIdInSession = Context.Session.GetInt32("ApplicantId");
+}
+
+<h1>Applicant Documents</h1>
+
+<!-- Conditionally display the Upload Proof Documents link -->
+@if (applicantIdInSession.HasValue)
+{
+    <a asp-action="UploadProof" class="btn btn-primary mb-3">Upload Proof Documents</a>
+}
+
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Document ID</th>
+                <th>Document Type</th>
+                <th>File Path</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var document in Model)
+            {
+                <tr>
+                    <td>@document.DocumentId</td>
+                    <td>@document.DocumentType</td>
+                    <td><a href="@document.FilePath" target="_blank">View File</a></td>
+                    <td>
+                        <!-- Download Action -->
+                        <a href="@document.FilePath" download class="btn btn-sm btn-info">Download</a>
+                        <!-- Conditionally display the Delete button -->
+                        @if (applicantIdInSession.HasValue && applicantIdInSession == document.ApplicantId)
+                        {
+                            <form asp-action="DeleteDocument" asp-route-id="@document.DocumentId" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

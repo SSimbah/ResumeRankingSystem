@@ -1,8 +1,19 @@
 using Domain.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using ResumeRankingLibrary.Services;
+using ResumeRankingSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+//var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+//{
+//    Args = args,
+//    ApplicationName = typeof(Program).Assembly.GetName().Name,
+//    ContentRootPath = AppContext.BaseDirectory,
+//    WebRootPath = "wwwroot"
+//});
 
+////builder.WebHost.UseUrls("http://0.0.0.0:7178", "https://0.0.0.0:7178");
+//builder.WebHost.UseUrls("http://0.0.0.0:7179", "https://0.0.0.0:7180");
 
 // Register DbContext with the DI container
 builder.Services.AddDbContext<DatabaseDbContext>(options =>
@@ -18,6 +29,15 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddHttpClient<PreprocessingHelper>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5000/");
+});
+builder.Services.AddScoped<ResumeRanker>(provider =>
+{
+    var httpClient = provider.GetRequiredService<HttpClient>();
+    return new ResumeRanker(httpClient);
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -1,0 +1,56 @@
+﻿@model Domain.Entities.EducationRequirement
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>EducationRequirement</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* <div class="form-group"> *@
+            @*     <label asp-for="JobId" class="control-label"></label> *@
+            @*     <input asp-for="JobId" class="form-control" /> *@
+            @*     <span asp-validation-for="JobId" class="text-danger"></span> *@
+            @* </div> *@
+
+            <input type="hidden" asp-for="JobId" value="@ViewBag.JobId" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Scoring" class="control-label"></label>
+                <input asp-for="Scoring" class="form-control" />
+                <span asp-validation-for="Scoring" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Display Success Alert -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Html.Raw(TempData["SuccessMessage"])
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div>
+    <a asp-controller="ExperienceRequirements" asp-action="Create" asp-route-jobId="@ViewBag.JobId" class="btn btn-secondary">Next</a>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

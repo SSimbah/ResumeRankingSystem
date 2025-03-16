@@ -5,41 +5,62 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const applyNowForm = document.querySelector("form[action='/Applications/RankApplicant']");
+
+            if (applyNowForm) {
+                applyNowForm.addEventListener("submit", async function (event) {
+                    event.preventDefault(); // Prevent the default form submission
+
+                    // Serialize the form data
+                    const formData = new FormData(applyNowForm);
+
+                    try {
+                        // Send the form data via a POST request
+                        const response = await fetch(applyNowForm.action, {
+                            method: "POST",
+                            body: formData,
+                            headers: {
+                                "RequestVerificationToken": document.querySelector("input[name='__RequestVerificationToken']").value
+                            }
+                        });
+
+                        // Parse the JSON response
+                        const result = await response.json();
+
+                        // Display an alert based on the response
+                        if (result.success) {
+                            alert(result.message); // Show success message
+                        } else {
+                            alert(result.message); // Show error message
+                        }
+                    } catch (error) {
+                        console.error("An error occurred:", error);
+                        alert("An unexpected error occurred. Please try again later.");
+                    }
+                });
+            }
+        });
+    </script>
+}
 
 <div>
-    <h4>JobPosting</h4>
+    <h4>@Html.DisplayFor(model => model.Title)</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
+        @* <dt class="col-sm-2"> *@
+        @*     @Html.DisplayNameFor(model => model.Title) *@
+        @* </dt> *@
+        @* <dd class="col-sm-10"> *@
+        @*     @Html.DisplayFor(model => model.Title) *@
+        @* </dd> *@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.SkillsRequirement)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.SkillsRequirement)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EducationRequirement)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EducationRequirement)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ExperienceRequirement)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ExperienceRequirement)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedAt)
@@ -54,8 +75,106 @@
             @Html.DisplayFor(model => model.User.Email)
         </dd>
     </dl>
+    <!-- Education Requirements -->
+    @if (Model.EducationRequirements != null && Model.EducationRequirements.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Education</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var req in Model.EducationRequirements)
+                {
+                    <tr>
+                        <td>@req.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No education requirements specified.</p>
+    }
+
+    <!-- Experience Requirements -->
+    @if (Model.ExperienceRequirements != null && Model.ExperienceRequirements.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Experience</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var req in Model.ExperienceRequirements)
+                {
+                    <tr>
+                        <td>@req.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No experience requirements specified.</p>
+    }
+
+    <!-- Skill Requirements -->
+    @if (Model.SkillRequirements != null && Model.SkillRequirements.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Skill</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var req in Model.SkillRequirements)
+                {
+                    <tr>
+                        <td>@req.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No skill requirements specified.</p>
+    }
+
 </div>
 <div>
     <a asp-action="Index">Back to List</a> |
-    <a asp-action="Index" asp-controller="Pdf">Upload Resume</a>
+    @if (Context.Session.GetInt32("ApplicantId") != null)
+    {
+        <!-- If the user is logged in, show the "Apply Now" link for the ApplicationsController -->
+        @* <a asp-action="RankApplicant" *@
+        @*    asp-controller="Applications" *@
+        @*    asp-route-applicantId="@Context.Session.GetInt32("ApplicantId")" *@
+        @*    asp-route-jobId="@Model.JobId">Apply Now</a> *@
+        <form asp-action="RankApplicant"
+              asp-controller="Applications"
+              method="post"
+              style="display: inline;">
+
+            <!-- Hidden fields to pass parameters -->
+            <input type="hidden" name="ApplicantId" value="@Context.Session.GetInt32("ApplicantId")" />
+            <input type="hidden" name="JobId" value="@Model.JobId" />
+
+            <!-- Submit button styled as a link -->
+            <button type="submit" class="btn btn-link p-0" style="text-decoration: underline;">
+                Apply Now
+            </button>
+        </form>
+    }
+    else
+    {
+        <!-- If the user is not logged in, show the "Login" link for the ApplicantsController -->
+        <a asp-action="Login" asp-controller="Applicants">Login to Apply</a>
+    }
 </div>

@@ -119,26 +119,96 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace ResumeRankingSystem.Services
 {
     public class PreprocessingHelper
     {
-        // Parse skills (comma-separated list)
-        public List<string> PreprocessSkills(string text)
+        private readonly HttpClient _httpClient;
+
+        public PreprocessingHelper(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("http://localhost:5000/"); // SpaCy API base URL
+        }
+
+        /// <summary>
+        /// Preprocesses text using the SpaCy API.
+        /// </summary>
+        /// <param name="text">The input text to preprocess.</param>
+        /// <returns>A list of preprocessed tokens.</returns>
+        public async Task<List<string>> Preprocess(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return new List<string>();
 
-            return text.Split(',')
-                .Select(skill => skill.Trim())
-                .Where(skill => !string.IsNullOrEmpty(skill))
-                .ToList();
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("preprocess", new { text });
+                response.EnsureSuccessStatusCode();
+
+                var result = await response.Content.ReadFromJsonAsync<SpacyResponse>();
+                if (result == null)
+                    throw new InvalidOperationException("Failed to preprocess text.");
+
+                // Extract tokens (using TokenValue or Lemma)
+                var tokens = result.Tokens
+                    .Where(t => t.IsAlpha && !t.IsStop) // Filter out non-alphabetic and stop words
+                    .Select(t => t.TokenValue.ToLower()) // Use TokenValue or Lemma
+                    .ToList();
+
+                // Extract named entities
+                var namedEntities = result.NamedEntities.Select(ne => ne.Text.ToLower());
+
+                // Combine tokens and named entities
+                var combined = tokens.Concat(namedEntities).Distinct().ToList();
+
+                return combined;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error calling SpaCy API: {ex.Message}");
+                throw;
+            }
         }
 
-        // Parse education entries
-        public List<(string School, string Degree)> PreprocessEducation(string text)
+        private class SpacyResponse
+        {
+            public List<Token> Tokens { get; set; } = new();
+            public List<NamedEntity> NamedEntities { get; set; } = new();
+        }
+
+        private class Token
+        {
+            public string TokenValue { get; set; } = ""; // Corresponds to "token" in JSON
+            public string Lemma { get; set; } = "";     // Corresponds to "lemma" in JSON
+            public string Stem { get; set; } = "";      // Corresponds to "stem" in JSON
+            public string Pos { get; set; } = "";       // Corresponds to "pos" in JSON
+            public bool IsAlpha { get; set; }           // Corresponds to "is_alpha" in JSON
+            public bool IsStop { get; set; }            // Corresponds to "is_stop" in JSON
+        }
+
+        private class NamedEntity
+        {
+            public string Text { get; set; } = "";
+            public string Label { get; set; } = "";
+        }
+
+        public async Task<List<string>> PreprocessSkills(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return new List<string>();
+
+            // Use the general Preprocess method
+            var tokens = await Preprocess(text);
+
+            return tokens;
+        }
+
+        public async Task<List<(string School, string Degree)>> PreprocessEducation(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return new List<(string School, string Degree)>();
@@ -154,8 +224,10 @@ namespace ResumeRankingSystem.Services
 
                 if (parts.Count >= 2)
                 {
-                    string school = parts[0].TrimStart('-').Trim();
-                    string degree = parts[1].Trim();
+                    // Apply preprocessing to school and degree
+                    string school = string.Join(" ", await Preprocess(parts[0].TrimStart('-').Trim()));
+                    string degree = string.Join(" ", await Preprocess(parts[1].Trim()));
+
                     results.Add((school, degree));
                 }
             }
@@ -163,8 +235,7 @@ namespace ResumeRankingSystem.Services
             return results;
         }
 
-        // Parse work experience entries
-        public List<(string Company, string JobTitle, string Duration, string Description)> PreprocessExperience(string text)
+        public async Task<List<(string Company, string JobTitle, string Duration, string Description)>> PreprocessExperience(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return new List<(string Company, string JobTitle, string Duration, string Description)>();
@@ -180,10 +251,11 @@ namespace ResumeRankingSystem.Services
 
                 if (parts.Count >= 4)
                 {
-                    string company = parts[0].TrimStart('-').Trim();
-                    string jobTitle = parts[1].Trim();
-                    string duration = ParseDuration(parts[2].Trim()); // Parse duration
-                    string description = parts.Count > 3 ? string.Join(", ", parts.Skip(3)) : string.Empty;
+                    // Apply preprocessing to company, job title, and description
+                    string company = string.Join(" ", await Preprocess(parts[0].TrimStart('-').Trim()));
+                    string jobTitle = string.Join(" ", await Preprocess(parts[1].Trim()));
+                    string duration = ParseDuration(parts[2].Trim()); // Parse duration (unchanged)
+                    string description = parts.Count > 3 ? string.Join(" ", await Preprocess(string.Join(", ", parts.Skip(3)))) : string.Empty;
 
                     results.Add((company, jobTitle, duration, description));
                 }
@@ -192,7 +264,6 @@ namespace ResumeRankingSystem.Services
             return results;
         }
 
-        // Helper method to parse duration
         private string ParseDuration(string durationText)
         {
             // Check if the duration is in the format "YYYY-YYYY"
@@ -219,19 +290,6 @@ namespace ResumeRankingSystem.Services
 
             // If parsing fails, return the original duration text
             return durationText;
-        }
-
-        // Combined method to preprocess all fields
-        public (List<string> Skills, List<(string School, string Degree)> Education, List<(string Company, string JobTitle, string Duration, string Description)> Experience) PreprocessAll(
-            string applicantSkills,
-            string applicantEducation,
-            string applicantExperience)
-        {
-            var skills = PreprocessSkills(applicantSkills);
-            var education = PreprocessEducation(applicantEducation);
-            var experience = PreprocessExperience(applicantExperience);
-
-            return (skills, education, experience);
         }
     }
 }

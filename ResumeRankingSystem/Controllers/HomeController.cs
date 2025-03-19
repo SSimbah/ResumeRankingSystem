@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
-namespace StudentAttendanceSystem.Controllers
+namespace ResumeRankingSystem.Controllers
 {
     public class HomeController : Controller
     {

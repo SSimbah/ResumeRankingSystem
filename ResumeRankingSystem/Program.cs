@@ -1,6 +1,5 @@
 using Domain.DataAccess;
 using Microsoft.EntityFrameworkCore;
-using ResumeRankingLibrary.Services;
 using ResumeRankingSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);

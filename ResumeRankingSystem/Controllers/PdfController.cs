@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Text;
 
-namespace YourApp.Controllers
+namespace ResumeRankingSystem.Controllers
 {
     public class PdfController : Controller
     {

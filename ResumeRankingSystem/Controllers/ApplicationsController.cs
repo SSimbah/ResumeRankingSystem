@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Domain.DataAccess;
 using Domain.Entities;
-using ResumeRankingLibrary.Services;
+using ResumeRankingSystem.Services;
 
 namespace ResumeRankingSystem.Controllers
 {
@@ -130,7 +130,7 @@ namespace ResumeRankingSystem.Controllers
             }
 
             // Call ScoreApplicant with extracted data
-            var (skillsScoring, educationScoring, experienceScoring, score) = _resumeRanker.ScoreApplicant(
+            var (skillsScoring, educationScoring, experienceScoring, score) = await _resumeRanker.ScoreApplicant(
                 applicant.Skills ?? string.Empty,
                 applicant.Education ?? string.Empty,
                 applicant.Experience ?? string.Empty,
@@ -214,7 +214,7 @@ namespace ResumeRankingSystem.Controllers
                 var applicant = application.Applicant;
 
                 // Call ScoreApplicant with extracted data
-                var (skillsScoring, educationScoring, experienceScoring, score) =  _resumeRanker.ScoreApplicant(
+                var (skillsScoring, educationScoring, experienceScoring, score) = await _resumeRanker.ScoreApplicant(
                     applicant.Skills ?? string.Empty,
                     applicant.Education ?? string.Empty,
                     applicant.Experience ?? string.Empty,
@@ -309,7 +309,11 @@ namespace ResumeRankingSystem.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                int jobId = application.JobId;
+
+                //return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ApplicantRank), new { jobId });
+
             }
             ViewData["ApplicantId"] = new SelectList(_context.Applicants, "ApplicantId", "Password", application.ApplicantId);
             return View(application);

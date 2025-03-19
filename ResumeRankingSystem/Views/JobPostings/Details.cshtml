@@ -1,15 +1,13 @@
-﻿
-@model Domain.Entities.JobPosting
+﻿@model Domain.Entities.JobPosting
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
-
 <div>
-    <h4>JobPosting</h4>
+    <h4>@Html.DisplayFor(model => model.Title)</h4>
+    <hr />
     <a asp-action="Index">Back to List</a> <text>|</text>
     @if (ViewBag.LoggedInUserId != null && ViewBag.LoggedInUserId == Model.UserId)
     {
@@ -18,56 +16,68 @@
     }
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedAt)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CreatedAt)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.User)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.User.Email)
         </dd>
     </dl>
 </div>
 <div>
-    @* <a asp-action="GetByJobId" asp-controller="SkillRequirements" asp-route-jobId="@Model.JobId">View Skill Requirements</a> <text>|</text> *@
-    @* <a asp-action="GetByJobId" asp-controller="EducationRequirements" asp-route-jobId="@Model.JobId">View Education Requirements</a> <text>|</text> *@
-    @* <a asp-action="GetByJobId" asp-controller="ExperienceRequirements" asp-route-jobId="@Model.JobId">View Experience Requirements</a> *@
     <!-- Bootstrap Flexbox container -->
-    <div class="d-flex flex-wrap gap-3 mt-4">
-        <a asp-action="GetByJobId"
-           asp-controller="SkillRequirements"
-           asp-route-jobId="@Model.JobId"
-           class="btn btn-dark">Skill Requirements</a>
+    <div class="d-flex flex-wrap gap-3 mt-4 align-items-center justify-content-center">
+        <!-- Dropdown for Skill, Education, and Experience Requirements -->
+        <div class="dropdown">
+            <button class="btn btn-dark dropdown-toggle" type="button" id="requirementsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                View Requirements
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="requirementsDropdown">
+                <li>
+                    <a class="dropdown-item"
+                       asp-action="GetByJobId"
+                       asp-controller="SkillRequirements"
+                       asp-route-jobId="@Model.JobId">
+                        Skill Requirements
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item"
+                       asp-action="GetByJobId"
+                       asp-controller="EducationRequirements"
+                       asp-route-jobId="@Model.JobId">
+                        Education Requirements
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item"
+                       asp-action="GetByJobId"
+                       asp-controller="ExperienceRequirements"
+                       asp-route-jobId="@Model.JobId">
+                        Experience Requirements
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-        <a asp-action="GetByJobId"
-           asp-controller="EducationRequirements"
-           asp-route-jobId="@Model.JobId"
-           class="btn btn-dark">Education Requirements</a>
-
-        <a asp-action="GetByJobId"
-           asp-controller="ExperienceRequirements"
-           asp-route-jobId="@Model.JobId"
-           class="btn btn-dark">Experience Requirements</a>
-
+        <!-- View Applicant Ranking Button -->
         <a asp-action="ApplicantRank"
            asp-controller="Applications"
            asp-route-jobId="@Model.JobId"
-           class="btn btn-dark">View Applicant Ranking</a>
+           class="btn btn-dark">
+            View Applicant Ranking
+        </a>
     </div>
 </div>

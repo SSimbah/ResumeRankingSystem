@@ -247,7 +247,7 @@ namespace ResumeRankingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Username,Password,FirstName,MiddleName,LastName,Objective,Email,PhoneNumber,Address,Gender,Age,Experience,Education,Skills")] Applicant applicant)
+        public async Task<IActionResult> Edit(int id, [Bind("ApplicantId,Username,Password,FirstName,MiddleName,LastName,Objective,Email,PhoneNumber,Address,Gender,Age,Experience,Education,Skills")] Applicant applicant)
         {
             if (id != applicant.ApplicantId)
             {
